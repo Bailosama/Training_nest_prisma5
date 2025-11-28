@@ -22,9 +22,11 @@ if (!isPasswordValid) {
   throw new UnauthorizedException();
 }
 const payload =  {sub : user.id , email : user.email}
+const userRoles = await this.prisma.userRoles.findMany({where: {userId: user.id} , include : {role : true}})
+const roleName =  userRoles.map(userRole => userRole.role.name)
 const accesToken = await  this.jwtService.signAsync(payload)
 return {
-email , accesToken
+email , accesToken,roles: roleName
  
   
 }
@@ -55,11 +57,33 @@ email , accesToken
     })
     const payload =  {sub : user.id , email : user.email}
     const accesToken =await this.jwtService.signAsync(payload)
+    // Récupérer le rôle par défaut 
+    const role = await this.prisma.role.findFirst({
+      where: { name: 'Client' } // Assurez-vous qu'un rôle 'USER' existe dans votre base de données
+    });
+
+    if (!role) {
+      throw new Error('Le rôle par défaut n\'a pas été trouvé');
+    }
+
+    // Créer la relation entre l'utilisateur et le rôle
+    const userRole = await this.prisma.userRoles.create({
+      data: {
+        userId: user.id,
+        roleId: role.id
+      },
+      include: {
+        role: true
+      }
+    });
+
     return {
-      data : {
-        name ,
-        email,
-        accesToken
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        accessToken: accesToken,
+        role: userRole.role.name
       }
     }
   
