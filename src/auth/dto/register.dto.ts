@@ -1,6 +1,7 @@
-import { IsNotEmpty, IsString,IsNumber } from "class-validator";
-export class CreateUserDto {
-    @IsNotEmpty()
+import { IsNotEmpty, IsString } from "class-validator"
+
+export class RegisterDto {
+  @IsNotEmpty()
     @IsString()
     email : string
 
@@ -13,6 +14,6 @@ export class CreateUserDto {
 
     @IsString()
     @IsNotEmpty({message : "le mot de passe est obligatoire"})
-    password:string
-   
+    password:string 
+    
 }

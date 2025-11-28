@@ -1,22 +1,17 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete,Request,UseGuards } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { UserEntity } from './entities/user.entity';
+import { AuthService } from 'src/auth/auth.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(private readonly userService: UserService ) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) : Promise<UserEntity | null>{
-    return this.userService.create(createUserDto);
-  }
+ 
 
-  @Get()
-  findAll() : Promise<UserEntity[]> {
-    return this.userService.findAll();
-  }
 
   @Get(':id')
   findOne(@Param('id') id: number) {

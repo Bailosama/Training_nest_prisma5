@@ -8,13 +8,7 @@ import { UserEntity } from './entities/user.entity';
 @Injectable()
 export class UserService {
   constructor(private prisma: PrismaService) {}
- async create(createUserDto: CreateUserDto) : Promise<UserEntity | null> {
-    const user = await this.prisma.user.create({
-      data: createUserDto,
-    });
-    const newUser =  new UserEntity(user);
-    return newUser
-  }
+
 
   async findAll() : Promise<UserEntity[]> {
     const users = await this.prisma.user.findMany()
@@ -24,11 +18,11 @@ export class UserService {
 
   async findOne(id: number): Promise<UserEntity|null> {
     const user = await this.prisma.user.findUnique({where:{id}})
-    if(!user) return null 
+    if(!user) throw new Error("utilisateur non trouvé") 
     return UserEntity.formPrisma(user)
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
+  async update(id: number, updateUserDto: UpdateUserDto) {
     return `This action updates a #${id} user`;
   }
 
